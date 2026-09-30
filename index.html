@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#080d1a">
+    <title>MyWork — Personal Workspace & Project Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#131c2e',
+                            900: '#0f172a',
+                            950: '#080d1a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #080d1a;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.18) 0px, transparent 55%),
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.14) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 55%);
+            background-attachment: fixed;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .link-card {
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .link-card:hover {
+            border-color: rgba(99, 102, 241, 0.45);
+            box-shadow: 0 12px 30px -8px rgba(79, 70, 229, 0.25);
+            transform: translateY(-2px);
+        }
+        .link-card:active {
+            transform: scale(0.985);
+        }
+        /* Hide scrollbar for horizontal pill bar on mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Custom Desktop Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080d1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+    </style>
+</head>
+
+<body class="text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white pb-20 sm:pb-8">
+
+    <!-- Top Navigation / Header -->
+    <header class="sticky top-0 z-30 glass-card border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-3 sm:py-4">
+            <div class="flex items-center justify-between gap-2 sm:gap-4">
+                
+                <!-- Brand Logo & Title -->
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/20">
+                        <i class="fa-solid fa-layer-group text-white text-lg sm:text-xl"></i>
+                    </div>
+                    <div class="truncate">
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-lg sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-indigo-300 bg-clip-text text-transparent">
+                                MyWork
+                            </h1>
+                            <span class="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                                Hub
+                            </span>
+                        </div>
+                        <p class="text-[11px] sm:text-xs text-slate-400 truncate">Personal Workspace &amp; Project Hub</p>
+                    </div>
+                </div>
+
+                <!-- Right Controls: Clock & Action Buttons -->
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                    <!-- Live Clock Display (Compact on Mobile, Full on Desktop) -->
+                    <div class="flex items-center gap-2 sm:gap-2.5 bg-slate-900/90 border border-slate-800 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                        <div class="text-left">
+                            <div id="liveClock" class="font-mono text-xs sm:text-sm font-semibold text-white tracking-tight">00:00:00</div>
+                            <div id="liveDate" class="hidden md:block text-[11px] text-slate-400">Memuat tanggal...</div>
+                        </div>
+                    </div>
+
+                    <!-- Backup Button -->
+                    <button onclick="openBackupModal()" title="Backup / Restore Data JSON" class="min-h-[44px] min-w-[44px] sm:min-w-0 px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-700 text-slate-200 border border-slate-700/80 text-xs sm:text-sm font-medium transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-code text-indigo-400 text-sm"></i>
+                        <span class="hidden md:inline">Backup</span>
+                    </button>
+
+                    <!-- Reset Button -->
+                    <button onclick="confirmResetDefault()" title="Reset ke Link Bawaan" class="min-h-[44px] min-w-[44px] sm:min-w-0 px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-700 text-slate-200 border border-slate-700/80 text-xs sm:text-sm font-medium transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-left text-amber-400 text-sm"></i>
+                        <span class="hidden md:inline">Reset</span>
+                    </button>
+
+                    <!-- Desktop Add Link Button (Hidden on Mobile because Mobile uses thumb FAB) -->
+                    <button onclick="openLinkModal()" class="hidden sm:flex min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-indigo-600/25 transition items-center gap-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Tambah Link</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-7 space-y-5 sm:space-y-7">
+
+        <!-- Hero Greeting, Search & Category Filter Section -->
+        <section class="glass-card rounded-2xl p-4 sm:p-6 border border-slate-800/90 relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                
+                <!-- Dynamic Greeting & Mobile Date -->
+                <div class="space-y-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-indigo-300 bg-indigo-500/15 border border-indigo-500/25 px-2.5 py-0.5 rounded-full">
+                            <i class="fa-solid fa-bolt text-indigo-400"></i>
+                            <span>Workspace Cepat</span>
+                        </span>
+                        <span id="mobileDateBadge" class="md:hidden text-[11px] text-slate-400 font-medium"></span>
+                    </div>
+                    <h2 id="greetingText" class="text-lg sm:text-2xl font-bold text-white pt-0.5">
+                        Selamat Bekerja, Arif! 👋
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-400">
+                        Ketuk kartu untuk langsung membuka web kerja, atau salin alamat URL dengan satu sentuhan.
+                    </p>
+                </div>
+
+                <!-- Search Input + View Toggle Row -->
+                <div class="flex items-center gap-2 w-full lg:w-auto">
+                    <div class="relative flex-1 lg:w-80 xl:w-96">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Cari project, URL, atau kategori..." 
+                            class="w-full min-h-[44px] pl-10 pr-10 py-2.5 rounded-xl bg-slate-900/95 border border-slate-700/80 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition"
+                        >
+                        <button 
+                            id="clearSearchBtn" 
+                            type="button"
+                            onclick="clearSearch()" 
+                            aria-label="Bersihkan pencarian"
+                            class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition"
+                        >
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                        <kbd id="searchShortcutBadge" class="hidden sm:inline-block absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-mono text-slate-400 bg-slate-800/90 border border-slate-700 px-2 py-0.5 rounded-md pointer-events-none">
+                            /
+                        </kbd>
+                    </div>
+
+                    <!-- View Toggle: Detailed Cards vs Compact Mobile Grid -->
+                    <button 
+                        id="viewModeBtn" 
+                        type="button"
+                        onclick="toggleViewMode()" 
+                        title="Ubah tampilan kartu (Detail / Ringkas 2 Kolom)"
+                        class="min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-900/95 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs font-semibold transition flex items-center gap-2 shrink-0"
+                    >
+                        <i id="viewModeIcon" class="fa-solid fa-grip text-indigo-400 text-sm"></i>
+                        <span id="viewModeLabel" class="hidden sm:inline">Ringkas</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Horizontal Scrollable Category Pills on Mobile -->
+            <div class="mt-4 pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div id="categoryTabs" class="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 py-0.5 snap-x">
+                    <!-- Populated via JS -->
+                </div>
+
+                <div class="flex items-center justify-between sm:justify-end gap-3 text-xs text-slate-400 shrink-0 pt-1 sm:pt-0">
+                    <div class="flex items-center gap-2.5">
+                        <span>Total: <strong id="totalLinksCount" class="text-white font-mono">0</strong></span>
+                        <span>•</span>
+                        <span>Pin Favorit: <strong id="favLinksCount" class="text-amber-400 font-mono">0</strong></span>
+                    </div>
+                    <button onclick="openLinkModal()" class="sm:hidden text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-plus-circle"></i> Tambah
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Workspace Grid + Quick Scratchpad Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 items-start">
+            
+            <!-- Left/Main Column: Link Cards Grid (8 cols on large screens) -->
+            <div class="lg:col-span-8 xl:col-span-9 space-y-4">
+                <div id="linksGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4">
+                    <!-- Cards populated dynamically by JavaScript -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden glass-card rounded-2xl p-8 sm:p-10 text-center space-y-4 border border-dashed border-slate-700">
+                    <div class="w-14 h-14 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-center mx-auto text-slate-400 text-2xl">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-base font-semibold text-white">Tidak ada link yang cocok</h3>
+                        <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+                            Coba ganti kata kunci pencarian, pilih kategori "Semua", atau tambahkan link project baru.
+                        </p>
+                    </div>
+                    <div class="pt-1 flex flex-wrap justify-center gap-2.5">
+                        <button onclick="clearSearch(); setCategory('Semua');" class="min-h-[44px] px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 transition">
+                            Reset Filter
+                        </button>
+                        <button onclick="openLinkModal()" class="min-h-[44px] px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition">
+                            + Tambah Link Baru
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar: Quick Notes Scratchpad & Local Port Reference -->
+            <aside class="lg:col-span-4 xl:col-span-3 space-y-4 sm:space-y-5">
+                
+                <!-- Quick Notes / Scratchpad Widget (Collapsible on Mobile for clean scrolling) -->
+                <div class="glass-card rounded-2xl border border-slate-800/90 overflow-hidden">
+                    <div class="p-4 sm:p-5 flex items-center justify-between gap-2">
+                        <button type="button" onclick="toggleMobileScratchpad()" class="flex items-center gap-2.5 text-left flex-1">
+                            <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                                <i class="fa-solid fa-note-sticky text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-sm font-bold text-white">Catatan Cepat</h3>
+                                    <i id="scratchpadChevron" class="fa-solid fa-chevron-up text-xs text-slate-400 lg:hidden transition-transform"></i>
+                                </div>
+                                <p class="text-[11px] text-slate-400">Auto-save di browser HP/PC</p>
+                            </div>
+                        </button>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="copyScratchpad()" title="Salin Catatan" class="min-h-[38px] min-w-[38px] rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs transition flex items-center justify-center">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                            <button onclick="clearScratchpad()" title="Bersihkan Catatan" class="min-h-[38px] min-w-[38px] rounded-xl bg-slate-800/80 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 text-xs transition flex items-center justify-center">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="scratchpadBody" class="px-4 pb-4 sm:px-5 sm:pb-5 space-y-3">
+                        <textarea 
+                            id="scratchpadArea" 
+                            rows="6" 
+                            placeholder="Tulis to-do hari ini, IP server, port lokal, atau catatan kerja singkat di sini..."
+                            class="w-full rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 text-xs sm:text-sm font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 resize-y leading-relaxed"
+                        ></textarea>
+
+                        <div class="flex items-center justify-between text-[11px] text-slate-400">
+                            <span id="scratchpadStatus" class="flex items-center gap-1.5 text-emerald-400">
+                                <i class="fa-solid fa-check-circle"></i> Tersimpan otomatis
+                            </span>
+                            <span id="scratchpadCount" class="font-mono">0 karakter</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Localhost & Port Cheatsheet Widget -->
+                <div class="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800/90 space-y-3.5">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+                            <i class="fa-solid fa-network-wired text-sm"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Port &amp; IP Cepat</h3>
+                            <p class="text-[11px] text-slate-400">Ketuk untuk langsung salin alamat</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-1 gap-2 text-xs font-mono">
+                        <button type="button" onclick="copyText('http://localhost:3000', 'Port Next.js / React disalin!')" class="min-h-[44px] flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800/90 active:bg-slate-800 border border-slate-800 text-left transition group">
+                            <span class="text-slate-300 font-sans font-medium text-[11px] sm:text-xs">Next.js / Dev</span>
+                            <span class="text-cyan-400 group-hover:underline text-[11px] sm:text-xs">:3000</span>
+                        </button>
+                        <button type="button" onclick="copyText('http://localhost:5173', 'Port Vite Dev Server disalin!')" class="min-h-[44px] flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800/90 active:bg-slate-800 border border-slate-800 text-left transition group">
+                            <span class="text-slate-300 font-sans font-medium text-[11px] sm:text-xs">Vite Server</span>
+                            <span class="text-cyan-400 group-hover:underline text-[11px] sm:text-xs">:5173</span>
+                        </button>
+                        <button type="button" onclick="copyText('http://localhost:5678', 'Port n8n Automation disalin!')" class="min-h-[44px] flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800/90 active:bg-slate-800 border border-slate-800 text-left transition group">
+                            <span class="text-slate-300 font-sans font-medium text-[11px] sm:text-xs">n8n Local</span>
+                            <span class="text-amber-400 group-hover:underline text-[11px] sm:text-xs">:5678</span>
+                        </button>
+                        <button type="button" onclick="copyText('http://192.168.1.1', 'IP Router Gateway disalin!')" class="min-h-[44px] flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800/90 active:bg-slate-800 border border-slate-800 text-left transition group">
+                            <span class="text-slate-300 font-sans font-medium text-[11px] sm:text-xs">Router Admin</span>
+                            <span class="text-emerald-400 group-hover:underline text-[11px] sm:text-xs">192.168.1.1</span>
+                        </button>
+                    </div>
+                </div>
+
+            </aside>
+
+        </div>
+    </main>
+
+    <!-- Mobile Floating Action Button (FAB) for Thumb Ergonomics -->
+    <button 
+        type="button"
+        onclick="openLinkModal()" 
+        aria-label="Tambah Link Project"
+        class="sm:hidden fixed bottom-5 right-5 z-40 h-14 px-5 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold text-sm shadow-xl shadow-indigo-600/40 border border-white/20 flex items-center gap-2.5 active:scale-95 transition"
+    >
+        <i class="fa-solid fa-plus text-base"></i>
+        <span>Link Baru</span>
+    </button>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 mt-8 py-6 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p>© <span id="footerYear">2026</span> <strong class="text-slate-200">MyWork Hub</strong> — Responsif untuk HP &amp; Desktop.</p>
+            <p class="flex items-center gap-2">
+                <span>Siap di-hosting gratis di</span>
+                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">GitHub</span>
+                <span>+</span>
+                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">Vercel</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal: Add / Edit Link (Bottom-sheet on mobile, centered modal on desktop) -->
+    <div id="linkModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center sm:p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="glass-card w-full max-w-lg rounded-t-3xl sm:rounded-2xl border-t sm:border border-slate-700/80 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+            <!-- Mobile drag handle indicator -->
+            <div class="sm:hidden pt-2.5 pb-1 flex justify-center">
+                <div class="w-10 h-1.5 rounded-full bg-slate-700"></div>
+            </div>
+
+            <div class="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-800 flex items-center justify-between">
+                <h3 id="modalTitle" class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-link text-indigo-400"></i>
+                    <span>Tambah Link Project Baru</span>
+                </h3>
+                <button type="button" onclick="closeLinkModal()" class="min-h-[40px] min-w-[40px] text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <form id="linkForm" onsubmit="saveLinkForm(event)" class="p-5 sm:p-6 space-y-4 overflow-y-auto">
+                <input type="hidden" id="linkId">
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">Nama Web / Project *</label>
+                    <input type="text" id="linkTitle" required placeholder="Contoh: Serabi Mbak Mur Web" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">Alamat URL *</label>
+                    <input type="text" id="linkUrl" required placeholder="https://... atau http://localhost:3000" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">Kategori *</label>
+                        <select id="linkCategory" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                            <option value="Web & Project">Web &amp; Project</option>
+                            <option value="Work & AI">Work &amp; AI</option>
+                            <option value="Server & Tools">Server &amp; Tools</option>
+                            <option value="Analytics & Bisnis">Analytics &amp; Bisnis</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">Tema Warna Kartu</label>
+                        <select id="linkColor" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                            <option value="indigo">Indigo (Biru Ungu)</option>
+                            <option value="emerald">Emerald (Hijau)</option>
+                            <option value="amber">Amber (Kuning Oranye)</option>
+                            <option value="cyan">Cyan (Biru Muda)</option>
+                            <option value="rose">Rose (Merah Muda)</option>
+                            <option value="purple">Purple (Ungu)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">Pilih Ikon</label>
+                        <select id="linkIcon" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                            <option value="fa-globe">🌐 Globe / Website</option>
+                            <option value="fa-utensils">🍲 Kuliner / Toko</option>
+                            <option value="fa-code">💻 Code / Dev</option>
+                            <option value="fa-brands fa-github">🐙 GitHub</option>
+                            <option value="fa-chart-line">📈 Analytics / SEO</option>
+                            <option value="fa-store">🏪 Bisnis / Maps</option>
+                            <option value="fa-brain">🧠 AI / Workspace</option>
+                            <option value="fa-diagram-project">⚡ Automation / n8n</option>
+                            <option value="fa-wifi">📡 Router / Jaringan</option>
+                            <option value="fa-cloud">☁️ Cloud / Server</option>
+                            <option value="fa-database">🗄️ Database</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-end">
+                        <label class="w-full min-h-[44px] px-3.5 rounded-xl bg-slate-900/70 border border-slate-800 flex items-center gap-2.5 cursor-pointer select-none text-sm text-slate-200">
+                            <input type="checkbox" id="linkFavorite" class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-indigo-600 focus:ring-indigo-500">
+                            <span>Pin ke <strong>Favorit Atas ⭐</strong></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">Deskripsi Singkat</label>
+                    <input type="text" id="linkDesc" placeholder="Catatan singkat kegunaan web ini..." class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="pt-3 border-t border-slate-800 flex items-center justify-end gap-2.5">
+                    <button type="button" onclick="closeLinkModal()" class="min-h-[44px] px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-medium text-slate-300 transition">
+                        Batal
+                    </button>
+                    <button type="submit" class="min-h-[44px] px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-indigo-600/25 transition">
+                        Simpan Link
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Backup / Restore JSON (Bottom-sheet on mobile) -->
+    <div id="backupModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center sm:p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="glass-card w-full max-w-lg rounded-t-3xl sm:rounded-2xl border-t sm:border border-slate-700/80 shadow-2xl overflow-hidden">
+            <div class="sm:hidden pt-2.5 pb-1 flex justify-center">
+                <div class="w-10 h-1.5 rounded-full bg-slate-700"></div>
+            </div>
+            <div class="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-800 flex items-center justify-between">
+                <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-code text-indigo-400"></i>
+                    <span>Backup &amp; Sinkronisasi Data</span>
+                </h3>
+                <button type="button" onclick="closeBackupModal()" class="min-h-[40px] min-w-[40px] text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+            <div class="p-5 sm:p-6 space-y-4">
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Salin kode JSON di bawah ini untuk mem-backup daftar link Anda, atau tempel JSON dari PC ke HP Anda agar daftar link selalu sama.
+                </p>
+                <textarea id="backupJsonArea" rows="6" class="w-full rounded-xl bg-slate-950 border border-slate-800 p-3 text-xs font-mono text-emerald-300 focus:outline-none focus:border-indigo-500"></textarea>
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <button type="button" onclick="copyBackupJson()" class="min-h-[44px] px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white transition flex items-center gap-2">
+                        <i class="fa-regular fa-copy"></i> Salin JSON
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="closeBackupModal()" class="min-h-[44px] px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">
+                            Tutup
+                        </button>
+                        <button type="button" onclick="importBackupJson()" class="min-h-[44px] px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition flex items-center gap-2">
+                            <i class="fa-solid fa-file-import"></i> Impor JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center sm:p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="glass-card w-full max-w-md rounded-t-3xl sm:rounded-2xl border-t sm:border border-slate-700/80 shadow-2xl p-5 sm:p-6 space-y-4">
+            <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
+                    <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                </div>
+                <div>
+                    <h4 id="confirmTitle" class="text-base font-bold text-white">Konfirmasi Tindakan</h4>
+                    <p id="confirmMessage" class="text-xs sm:text-sm text-slate-300 mt-0.5">Apakah Anda yakin ingin melanjutkan?</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-2.5 pt-2">
+                <button type="button" onclick="closeConfirmModal()" class="min-h-[44px] px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 transition">
+                    Batal
+                </button>
+                <button type="button" id="confirmActionBtn" class="min-h-[44px] px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-semibold text-white transition">
+                    Ya, Lanjutkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-4 right-4 sm:top-auto sm:bottom-5 sm:right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-[90vw]"></div>
+
+    <!-- Application JavaScript -->
+    <script>
+        const STORAGE_KEY_LINKS = 'mywork_hub_links_v2';
+        const STORAGE_KEY_NOTES = 'mywork_hub_notes_v2';
+        const STORAGE_KEY_VIEW = 'mywork_hub_view_mode_v2';
+
+        // Default Pre-populated Links
+        const DEFAULT_LINKS = [
+            {
+                id: 'link-1',
+                title: 'Serabi Mbak Mur Web',
+                url: 'https://serabimbakmur.vercel.app',
+                category: 'Web & Project',
+                description: 'Landing page utama & katalog online usaha kuliner Serabi Mbak Mur.',
+                icon: 'fa-utensils',
+                color: 'emerald',
+                favorite: true
+            },
+            {
+                id: 'link-6',
+                title: 'Outlier AI Workspace',
+                url: 'https://app.outlier.ai',
+                category: 'Work & AI',
+                description: 'Platform kerja remote AI training, tasking, dan evaluasi model.',
+                icon: 'fa-brain',
+                color: 'rose',
+                favorite: true
+            },
+            {
+                id: 'link-2',
+                title: 'Vercel Dashboard',
+                url: 'https://vercel.com/dashboard',
+                category: 'Web & Project',
+                description: 'Panel deployment project web frontend, domain, dan log produksi.',
+                icon: 'fa-code',
+                color: 'indigo',
+                favorite: true
+            },
+            {
+                id: 'link-3',
+                title: 'GitHub Repositories',
+                url: 'https://github.com',
+                category: 'Web & Project',
+                description: 'Tempat penyimpanan source code semua repositori project & backup kode.',
+                icon: 'fa-brands fa-github',
+                color: 'purple',
+                favorite: true
+            },
+            {
+                id: 'link-4',
+                title: 'Google Search Console',
+                url: 'https://search.google.com/search-console',
+                category: 'Analytics & Bisnis',
+                description: 'Pantau indeks halaman web, klik organik, dan performa SEO di Google.',
+                icon: 'fa-chart-line',
+                color: 'cyan',
+                favorite: false
+            },
+            {
+                id: 'link-5',
+                title: 'Google Business Profile',
+                url: 'https://business.google.com',
+                category: 'Analytics & Bisnis',
+                description: 'Kelola profil lokasi Google Maps, ulasan pelanggan, dan jam operasional.',
+                icon: 'fa-store',
+                color: 'amber',
+                favorite: false
+            },
+            {
+                id: 'link-7',
+                title: 'n8n Workflow Automation',
+                url: 'http://localhost:5678',
+                category: 'Server & Tools',
+                description: 'Editor otomasi workflow lokal dan integrasi webhook API.',
+                icon: 'fa-diagram-project',
+                color: 'amber',
+                favorite: false
+            },
+            {
+                id: 'link-8',
+                title: 'OpenWrt / MikroTik Router Panel',
+                url: 'http://192.168.1.1',
+                category: 'Server & Tools',
+                description: 'Dashboard manajemen router jaringan lokal, bandwidth, dan Wi-Fi.',
+                icon: 'fa-wifi',
+                color: 'cyan',
+                favorite: false
+            },
+            {
+                id: 'link-9',
+                title: 'Google Cloud Run Console',
+                url: 'https://console.cloud.google.com/run',
+                category: 'Server & Tools',
+                description: 'Manajemen container serverless, API backend, dan log layanan cloud.',
+                icon: 'fa-cloud',
+                color: 'indigo',
+                favorite: false
+            }
+        ];
+
+        const CATEGORIES = [
+            { name: 'Semua', icon: 'fa-border-all' },
+            { name: 'Favorit ⭐', icon: 'fa-star' },
+            { name: 'Web & Project', icon: 'fa-laptop-code' },
+            { name: 'Work & AI', icon: 'fa-brain' },
+            { name: 'Server & Tools', icon: 'fa-server' },
+            { name: 'Analytics & Bisnis', icon: 'fa-chart-pie' }
+        ];
+
+        const COLOR_STYLES = {
+            indigo: {
+                badgeBg: 'bg-indigo-500/15',
+                badgeText: 'text-indigo-400',
+                badgeBorder: 'border-indigo-500/30',
+                pill: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
+                btnBg: 'bg-indigo-600/90 hover:bg-indigo-500 text-white'
+            },
+            emerald: {
+                badgeBg: 'bg-emerald-500/15',
+                badgeText: 'text-emerald-400',
+                badgeBorder: 'border-emerald-500/30',
+                pill: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
+                btnBg: 'bg-emerald-600/90 hover:bg-emerald-500 text-white'
+            },
+            amber: {
+                badgeBg: 'bg-amber-500/15',
+                badgeText: 'text-amber-400',
+                badgeBorder: 'border-amber-500/30',
+                pill: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
+                btnBg: 'bg-amber-600/90 hover:bg-amber-500 text-white'
+            },
+            cyan: {
+                badgeBg: 'bg-cyan-500/15',
+                badgeText: 'text-cyan-400',
+                badgeBorder: 'border-cyan-500/30',
+                pill: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20',
+                btnBg: 'bg-cyan-600/90 hover:bg-cyan-500 text-white'
+            },
+            rose: {
+                badgeBg: 'bg-rose-500/15',
+                badgeText: 'text-rose-400',
+                badgeBorder: 'border-rose-500/30',
+                pill: 'bg-rose-500/10 text-rose-300 border-rose-500/20',
+                btnBg: 'bg-rose-600/90 hover:bg-rose-500 text-white'
+            },
+            purple: {
+                badgeBg: 'bg-purple-500/15',
+                badgeText: 'text-purple-400',
+                badgeBorder: 'border-purple-500/30',
+                pill: 'bg-purple-500/10 text-purple-300 border-purple-500/20',
+                btnBg: 'bg-purple-600/90 hover:bg-purple-500 text-white'
+            }
+        };
+
+        let links = [];
+        let activeCategory = 'Semua';
+        let searchQuery = '';
+        let isCompactView = false;
+        let isScratchpadOpenMobile = true;
+        let pendingConfirmCallback = null;
+
+        function initApp() {
+            loadLinksFromStorage();
+            loadViewMode();
+            initScratchpad();
+            updateClockAndGreeting();
+            setInterval(updateClockAndGreeting, 1000);
+            renderCategoryTabs();
+            renderLinksGrid();
+            setupSearchAndShortcuts();
+            document.getElementById('footerYear').textContent = new Date().getFullYear();
+        }
+
+        function loadLinksFromStorage() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY_LINKS);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        links = parsed;
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn('Gagal memuat localStorage, menggunakan data default.', e);
+            }
+            links = JSON.parse(JSON.stringify(DEFAULT_LINKS));
+            saveLinksToStorage();
+        }
+
+        function saveLinksToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY_LINKS, JSON.stringify(links));
+            } catch (e) {
+                console.warn('Gagal menyimpan ke localStorage.', e);
+            }
+        }
+
+        function loadViewMode() {
+            try {
+                const savedView = localStorage.getItem(STORAGE_KEY_VIEW);
+                isCompactView = savedView === 'compact';
+            } catch (e) {
+                isCompactView = false;
+            }
+            updateViewModeButtonUI();
+        }
+
+        function toggleViewMode() {
+            isCompactView = !isCompactView;
+            try {
+                localStorage.setItem(STORAGE_KEY_VIEW, isCompactView ? 'compact' : 'detailed');
+            } catch (e) {}
+            updateViewModeButtonUI();
+            renderLinksGrid();
+            showToast(isCompactView ? 'Mode Ringkas (2 kolom di HP) aktif' : 'Mode Kartu Detail aktif', 'info');
+        }
+
+        function updateViewModeButtonUI() {
+            const icon = document.getElementById('viewModeIcon');
+            const label = document.getElementById('viewModeLabel');
+            if (isCompactView) {
+                icon.className = 'fa-solid fa-table-list text-emerald-400 text-sm';
+                label.textContent = 'Detail';
+            } else {
+                icon.className = 'fa-solid fa-grip text-indigo-400 text-sm';
+                label.textContent = 'Ringkas';
+            }
+        }
+
+        function updateClockAndGreeting() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const formattedHours = String(hours).padStart(2, '0');
+
+            document.getElementById('liveClock').textContent = `${formattedHours}:${minutes}:${seconds} WIB`;
+
+            const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDate = now.toLocaleDateString('id-ID', dateOptions);
+            document.getElementById('liveDate').textContent = formattedDate;
+            const mobileBadge = document.getElementById('mobileDateBadge');
+            if (mobileBadge) mobileBadge.textContent = `• ${formattedDate}`;
+
+            let period = 'Selamat Bekerja';
+            if (hours >= 4 && hours < 11) period = 'Selamat Pagi';
+            else if (hours >= 11 && hours < 15) period = 'Selamat Siang';
+            else if (hours >= 15 && hours < 18) period = 'Selamat Sore';
+            else period = 'Selamat Malam';
+
+            document.getElementById('greetingText').textContent = `${period}, Arif! 👋`;
+        }
+
+        function getCategoryCount(catName) {
+            if (catName === 'Semua') return links.length;
+            if (catName === 'Favorit ⭐') return links.filter(l => l.favorite).length;
+            return links.filter(l => l.category === catName).length;
+        }
+
+        function renderCategoryTabs() {
+            const container = document.getElementById('categoryTabs');
+            container.innerHTML = CATEGORIES.map(cat => {
+                const isActive = activeCategory === cat.name;
+                const count = getCategoryCount(cat.name);
+                const activeClasses = isActive
+                    ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/25'
+                    : 'bg-slate-900/90 text-slate-300 hover:text-white hover:bg-slate-800 border-slate-800';
+                const badgeClasses = isActive
+                    ? 'bg-indigo-800/90 text-indigo-100'
+                    : 'bg-slate-800 text-slate-400';
+
+                return `
+                    <button 
+                        type="button"
+                        onclick="setCategory('${cat.name}')"
+                        class="snap-start min-h-[40px] px-3.5 py-2 rounded-xl border text-xs font-semibold transition flex items-center gap-2 shrink-0 ${activeClasses}"
+                    >
+                        <span>${cat.name}</span>
+                        <span class="px-1.5 py-0.5 rounded-md text-[10px] font-mono ${badgeClasses}">${count}</span>
+                    </button>
+                `;
+            }).join('');
+
+            document.getElementById('totalLinksCount').textContent = links.length;
+            document.getElementById('favLinksCount').textContent = links.filter(l => l.favorite).length;
+        }
+
+        function setCategory(catName) {
+            activeCategory = catName;
+            renderCategoryTabs();
+            renderLinksGrid();
+        }
+
+        function formatCleanUrl(url) {
+            try {
+                return url.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+            } catch (e) {
+                return url;
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function renderLinksGrid() {
+            const grid = document.getElementById('linksGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            // Adjust grid columns dynamically based on Compact vs Detailed view
+            if (isCompactView) {
+                grid.className = 'grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3.5';
+            } else {
+                grid.className = 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4';
+            }
+
+            // Filter by category and search query, then sort pinned favorites first
+            const filtered = links
+                .filter(item => {
+                    if (activeCategory === 'Favorit ⭐') return Boolean(item.favorite);
+                    if (activeCategory !== 'Semua' && item.category !== activeCategory) return false;
+                    return true;
+                })
+                .filter(item => {
+                    if (!searchQuery.trim()) return true;
+                    const q = searchQuery.toLowerCase();
+                    return (
+                        (item.title || '').toLowerCase().includes(q) ||
+                        (item.url || '').toLowerCase().includes(q) ||
+                        (item.category || '').toLowerCase().includes(q) ||
+                        (item.description || '').toLowerCase().includes(q)
+                    );
+                })
+                .sort((a, b) => Number(Boolean(b.favorite)) - Number(Boolean(a.favorite)));
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = filtered.map(item => {
+                const style = COLOR_STYLES[item.color] || COLOR_STYLES.indigo;
+                const safeTitle = escapeHtml(item.title);
+                const safeUrl = escapeHtml(item.url);
+                const safeCategory = escapeHtml(item.category);
+                const safeDesc = escapeHtml(item.description || 'Tidak ada catatan deskripsi.');
+                const cleanHost = escapeHtml(formatCleanUrl(item.url));
+                const iconClass = item.icon && item.icon.includes('fa-brands')
+                    ? item.icon
+                    : `fa-solid ${item.icon || 'fa-globe'}`;
+
+                // Compact 2-Column Mobile Tile View
+                if (isCompactView) {
+                    return `
+                        <div class="glass-card link-card rounded-2xl p-3.5 flex flex-col justify-between gap-2.5 relative group">
+                            <div class="flex items-start justify-between gap-2">
+                                <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl ${style.badgeBg} border ${style.badgeBorder} flex items-center justify-center ${style.badgeText} text-base shrink-0">
+                                    <i class="${iconClass}"></i>
+                                </a>
+                                <div class="flex items-center gap-1">
+                                    <button type="button" onclick="toggleFavorite('${item.id}')" title="Pin Favorit" class="w-8 h-8 rounded-lg bg-slate-900/80 hover:bg-slate-800 flex items-center justify-center ${item.favorite ? 'text-amber-400' : 'text-slate-500'}">
+                                        <i class="${item.favorite ? 'fa-solid' : 'fa-regular'} fa-star text-xs"></i>
+                                    </button>
+                                    <button type="button" onclick="openLinkModal('${item.id}')" title="Edit" class="w-8 h-8 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                                        <i class="fa-solid fa-pen text-[11px]"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="block space-y-0.5 min-w-0">
+                                <h3 class="text-xs sm:text-sm font-bold text-white truncate group-hover:text-indigo-300 transition">${safeTitle}</h3>
+                                <p class="text-[11px] font-mono text-slate-400 truncate">${cleanHost}</p>
+                            </a>
+
+                            <div class="flex items-center gap-1.5 pt-1">
+                                <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 min-h-[38px] rounded-xl ${style.btnBg} text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition">
+                                    <span>Buka</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </a>
+                                <button type="button" onclick="copyText('${safeUrl}', 'URL ${safeTitle} disalin!')" title="Salin URL" class="min-h-[38px] w-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition">
+                                    <i class="fa-regular fa-copy text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Detailed Card View (Touch-friendly on Mobile & Desktop)
+                return `
+                    <article class="glass-card link-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-4 relative group">
+                        <div class="space-y-3">
+                            <!-- Card Top Row: Icon, Category & Quick Actions -->
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="w-11 h-11 rounded-2xl ${style.badgeBg} border ${style.badgeBorder} flex items-center justify-center ${style.badgeText} text-lg shrink-0 shadow-inner">
+                                        <i class="${iconClass}"></i>
+                                    </a>
+                                    <div class="min-w-0">
+                                        <span class="inline-block text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md border ${style.pill} mb-1">
+                                            ${safeCategory}
+                                        </span>
+                                        <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="block">
+                                            <h3 class="text-sm sm:text-base font-bold text-white truncate group-hover:text-indigo-300 transition">
+                                                ${safeTitle}
+                                            </h3>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Pin, Edit, Delete Controls -->
+                                <div class="flex items-center gap-1 shrink-0">
+                                    <button 
+                                        type="button"
+                                        onclick="toggleFavorite('${item.id}')" 
+                                        title="${item.favorite ? 'Hapus dari Favorit' : 'Pin ke Favorit'}"
+                                        class="w-9 h-9 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 flex items-center justify-center transition ${item.favorite ? 'text-amber-400' : 'text-slate-500 hover:text-slate-300'}"
+                                    >
+                                        <i class="${item.favorite ? 'fa-solid' : 'fa-regular'} fa-star text-xs"></i>
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        onclick="openLinkModal('${item.id}')" 
+                                        title="Edit Link"
+                                        class="w-9 h-9 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition"
+                                    >
+                                        <i class="fa-solid fa-pen text-xs"></i>
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        onclick="confirmDeleteLink('${item.id}')" 
+                                        title="Hapus Link"
+                                        class="w-9 h-9 rounded-xl bg-slate-900/90 hover:bg-rose-500/20 border border-slate-800 text-slate-400 hover:text-rose-400 flex items-center justify-center transition"
+                                    >
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-xs text-slate-300/90 line-clamp-2 leading-relaxed">
+                                ${safeDesc}
+                            </p>
+
+                            <!-- Clean Monospace URL Display -->
+                            <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-950/80 border border-slate-800/90 text-[11px] font-mono text-slate-400">
+                                <i class="fa-solid fa-link text-slate-500 text-[10px]"></i>
+                                <span class="truncate flex-1">${cleanHost}</span>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Touch-Friendly Action Buttons (min-h-44px for mobile ergonomics) -->
+                        <div class="flex items-center gap-2 pt-1">
+                            <a 
+                                href="${safeUrl}" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                class="flex-1 min-h-[44px] px-4 py-2.5 rounded-xl ${style.btnBg} font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition"
+                            >
+                                <span>Buka Web</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                            </a>
+                            <button 
+                                type="button"
+                                onclick="copyText('${safeUrl}', 'Alamat URL disalin!')" 
+                                title="Salin Alamat URL"
+                                class="min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 active:bg-slate-700 text-slate-200 border border-slate-700/80 text-xs font-medium transition flex items-center justify-center gap-1.5 shrink-0"
+                            >
+                                <i class="fa-regular fa-copy"></i>
+                                <span>Salin</span>
+                            </button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function toggleFavorite(id) {
+            const index = links.findIndex(item => item.id === id);
+            if (index === -1) return;
+            links[index].favorite = !links[index].favorite;
+            saveLinksToStorage();
+            renderCategoryTabs();
+            renderLinksGrid();
+            showToast(
+                links[index].favorite ? 'Ditambahkan ke pin Favorit ⭐' : 'Dihapus dari Favorit',
+                'info'
+            );
+        }
+
+        function openLinkModal(editId = null) {
+            const modal = document.getElementById('linkModal');
+            const titleEl = document.getElementById('modalTitle');
+            const form = document.getElementById('linkForm');
+            form.reset();
+
+            if (editId) {
+                const existing = links.find(item => item.id === editId);
+                if (!existing) return;
+                titleEl.innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-400"></i><span>Edit Link Project</span>';
+                document.getElementById('linkId').value = existing.id;
+                document.getElementById('linkTitle').value = existing.title;
+                document.getElementById('linkUrl').value = existing.url;
+                document.getElementById('linkCategory').value = existing.category;
+                document.getElementById('linkColor').value = existing.color || 'indigo';
+                document.getElementById('linkIcon').value = existing.icon || 'fa-globe';
+                document.getElementById('linkFavorite').checked = Boolean(existing.favorite);
+                document.getElementById('linkDesc').value = existing.description || '';
+            } else {
+                titleEl.innerHTML = '<i class="fa-solid fa-plus-circle text-indigo-400"></i><span>Tambah Link Project Baru</span>';
+                document.getElementById('linkId').value = '';
+                if (activeCategory !== 'Semua' && activeCategory !== 'Favorit ⭐') {
+                    document.getElementById('linkCategory').value = activeCategory;
+                }
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => document.getElementById('linkTitle').focus(), 80);
+        }
+
+        function closeLinkModal() {
+            const modal = document.getElementById('linkModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function normalizeUrl(rawUrl) {
+            let trimmed = rawUrl.trim();
+            if (!/^https?:\/\//i.test(trimmed)) {
+                trimmed = 'https://' + trimmed;
+            }
+            return trimmed;
+        }
+
+        function saveLinkForm(event) {
+            event.preventDefault();
+            const id = document.getElementById('linkId').value;
+            const title = document.getElementById('linkTitle').value.trim();
+            const rawUrl = document.getElementById('linkUrl').value.trim();
+            const category = document.getElementById('linkCategory').value;
+            const color = document.getElementById('linkColor').value;
+            const icon = document.getElementById('linkIcon').value;
+            const favorite = document.getElementById('linkFavorite').checked;
+            const description = document.getElementById('linkDesc').value.trim();
+
+            if (!title || !rawUrl) {
+                showToast('Nama web dan alamat URL wajib diisi!', 'error');
+                return;
+            }
+
+            const url = normalizeUrl(rawUrl);
+
+            if (id) {
+                const idx = links.findIndex(item => item.id === id);
+                if (idx !== -1) {
+                    links[idx] = { ...links[idx], title, url, category, color, icon, favorite, description };
+                    showToast(`"${title}" berhasil diperbarui!`, 'success');
+                }
+            } else {
+                const newLink = {
+                    id: 'link-' + Date.now(),
+                    title,
+                    url,
+                    category,
+                    color,
+                    icon,
+                    favorite,
+                    description
+                };
+                links.unshift(newLink);
+                showToast(`"${title}" ditambahkan ke MyWork!`, 'success');
+            }
+
+            saveLinksToStorage();
+            renderCategoryTabs();
+            renderLinksGrid();
+            closeLinkModal();
+        }
+
+        function confirmDeleteLink(id) {
+            const target = links.find(item => item.id === id);
+            if (!target) return;
+            openConfirmModal(
+                'Hapus Link Project?',
+                `Apakah Anda yakin ingin menghapus "${target.title}" dari daftar MyWork?`,
+                () => {
+                    links = links.filter(item => item.id !== id);
+                    saveLinksToStorage();
+                    renderCategoryTabs();
+                    renderLinksGrid();
+                    showToast('Link berhasil dihapus', 'info');
+                }
+            );
+        }
+
+        function confirmResetDefault() {
+            openConfirmModal(
+                'Reset ke Daftar Bawaan?',
+                'Semua perubahan kustom akan dikembalikan ke 9 daftar link default MyWork.',
+                () => {
+                    links = JSON.parse(JSON.stringify(DEFAULT_LINKS));
+                    saveLinksToStorage();
+                    activeCategory = 'Semua';
+                    clearSearch();
+                    renderCategoryTabs();
+                    renderLinksGrid();
+                    showToast('Daftar link berhasil di-reset ke bawaan!', 'success');
+                }
+            );
+        }
+
+        function openConfirmModal(title, message, onConfirm) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            pendingConfirmCallback = onConfirm;
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            pendingConfirmCallback = null;
+        }
+
+        document.getElementById('confirmActionBtn').addEventListener('click', () => {
+            if (typeof pendingConfirmCallback === 'function') {
+                pendingConfirmCallback();
+            }
+            closeConfirmModal();
+        });
+
+        // Search & Keyboard Shortcuts
+        function setupSearchAndShortcuts() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const badge = document.getElementById('searchShortcutBadge');
+
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                if (searchQuery.length > 0) {
+                    clearBtn.classList.remove('hidden');
+                    badge.classList.add('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                    badge.classList.remove('hidden');
+                }
+                renderLinksGrid();
+            });
+
+            window.addEventListener('keydown', (e) => {
+                const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+                if (e.key === '/' && tag !== 'input' && tag !== 'textarea' && tag !== 'select') {
+                    e.preventDefault();
+                    searchInput.focus();
+                } else if (e.key === 'Escape') {
+                    closeLinkModal();
+                    closeBackupModal();
+                    closeConfirmModal();
+                    if (document.activeElement === searchInput) {
+                        clearSearch();
+                        searchInput.blur();
+                    }
+                }
+            });
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            searchQuery = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            document.getElementById('searchShortcutBadge').classList.remove('hidden');
+            renderLinksGrid();
+        }
+
+        // Scratchpad / Quick Notes Logic
+        function initScratchpad() {
+            const area = document.getElementById('scratchpadArea');
+            const countEl = document.getElementById('scratchpadCount');
+            const statusEl = document.getElementById('scratchpadStatus');
+
+            try {
+                const savedNotes = localStorage.getItem(STORAGE_KEY_NOTES);
+                if (savedNotes !== null) {
+                    area.value = savedNotes;
+                } else {
+                    area.value = "✅ Checklist Kerja Harian:\n- Cek performa SEO Serabi Mbak Mur\n- Cek task baru di Outlier AI\n- Pastikan workflow n8n berjalan";
+                }
+            } catch (e) {}
+
+            countEl.textContent = `${area.value.length} karakter`;
+
+            area.addEventListener('input', () => {
+                countEl.textContent = `${area.value.length} karakter`;
+                statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+                try {
+                    localStorage.setItem(STORAGE_KEY_NOTES, area.value);
+                } catch (e) {}
+                clearTimeout(window.scratchpadTimer);
+                window.scratchpadTimer = setTimeout(() => {
+                    statusEl.innerHTML = '<i class="fa-solid fa-check-circle"></i> Tersimpan otomatis';
+                }, 400);
+            });
+        }
+
+        function toggleMobileScratchpad() {
+            if (window.innerWidth >= 1024) return; // Keep open on desktop
+            const body = document.getElementById('scratchpadBody');
+            const chevron = document.getElementById('scratchpadChevron');
+            isScratchpadOpenMobile = !isScratchpadOpenMobile;
+            if (isScratchpadOpenMobile) {
+                body.classList.remove('hidden');
+                chevron.style.transform = 'rotate(0deg)';
+            } else {
+                body.classList.add('hidden');
+                chevron.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function copyScratchpad() {
+            const area = document.getElementById('scratchpadArea');
+            if (!area.value.trim()) {
+                showToast('Catatan masih kosong!', 'error');
+                return;
+            }
+            copyText(area.value, ' seluruh catatan disalin ke clipboard!');
+        }
+
+        function clearScratchpad() {
+            const area = document.getElementById('scratchpadArea');
+            if (!area.value.trim()) return;
+            openConfirmModal(
+                'Bersihkan Catatan Cepat?',
+                'Seluruh teks di dalam kotak catatan cepat akan dihapus.',
+                () => {
+                    area.value = '';
+                    try {
+                        localStorage.setItem(STORAGE_KEY_NOTES, '');
+                    } catch (e) {}
+                    document.getElementById('scratchpadCount').textContent = '0 karakter';
+                    showToast('Catatan dibersihkan', 'info');
+                }
+            );
+        }
+
+        // Backup & Restore Modal Logic
+        function openBackupModal() {
+            const modal = document.getElementById('backupModal');
+            const area = document.getElementById('backupJsonArea');
+            area.value = JSON.stringify(links, null, 2);
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeBackupModal() {
+            const modal = document.getElementById('backupModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function copyBackupJson() {
+            const area = document.getElementById('backupJsonArea');
+            copyText(area.value, 'Kode JSON Backup berhasil disalin!');
+        }
+
+        function importBackupJson() {
+            const area = document.getElementById('backupJsonArea');
+            try {
+                const parsed = JSON.parse(area.value);
+                if (!Array.isArray(parsed)) throw new Error('Format JSON harus berupa array');
+                links = parsed;
+                saveLinksToStorage();
+                renderCategoryTabs();
+                renderLinksGrid();
+                closeBackupModal();
+                showToast('Data JSON berhasil diimpor!', 'success');
+            } catch (e) {
+                showToast('Format JSON tidak valid. Periksa kembali!', 'error');
+            }
+        }
+
+        // Reliable Clipboard Helper (Supports iframe & mobile browsers)
+        function copyText(text, successMsg = 'Teks berhasil disalin!') {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            textArea.style.top = '0';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                showToast(successMsg, 'success');
+            } catch (err) {
+                showToast('Gagal menyalin teks', 'error');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Toast Notification Helper
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+
+            let icon = 'fa-circle-check text-emerald-400';
+            let border = 'border-emerald-500/40';
+            if (type === 'error') {
+                icon = 'fa-circle-exclamation text-rose-400';
+                border = 'border-rose-500/40';
+            } else if (type === 'info') {
+                icon = 'fa-circle-info text-indigo-400';
+                border = 'border-indigo-500/40';
+            }
+
+            toast.className = `glass-card px-4 py-3 rounded-xl border ${border} shadow-xl flex items-center gap-2.5 text-xs sm:text-sm font-medium text-white pointer-events-auto transition-all duration-300`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i><span>${escapeHtml(message)}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(8px)';
+                setTimeout(() => toast.remove(), 250);
+            }, 2600);
+        }
+
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
