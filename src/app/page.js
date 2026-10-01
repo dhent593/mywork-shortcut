@@ -51,11 +51,11 @@ function LoginView() {
                   } 
                 },
                 className: {
-                  button: 'font-mono text-xs text-emerald-400 border border-emerald-500/30 hover:border-emerald-400 hover:text-emerald-300 transition-all uppercase tracking-[0.2em] mt-4 py-3 bg-zinc-950',
-                  input: 'font-mono text-sm bg-transparent border-0 border-b border-zinc-800 focus:border-emerald-500 focus:ring-0 text-emerald-400 px-0 py-2 placeholder-zinc-700 transition-colors',
-                  label: 'font-mono text-emerald-500/70 text-[10px] uppercase tracking-[0.2em] mb-0 flex items-center gap-2 before:content-[\'>\'] before:text-emerald-500/70',
-                  anchor: 'text-zinc-500 hover:text-emerald-400 font-mono text-[10px] uppercase tracking-widest transition-colors',
-                  message: 'text-rose-400 font-mono text-xs mt-2'
+                  button: '!font-mono !text-xs !text-emerald-400 !border !border-emerald-500/30 hover:!border-emerald-400 hover:!text-emerald-300 !transition-all !uppercase !tracking-[0.2em] !mt-4 !py-3 !bg-zinc-950 !rounded-none',
+                  input: '!font-mono !text-sm !bg-transparent !border-0 !border-b !border-zinc-800 focus:!border-emerald-500 focus:!ring-0 !text-emerald-400 !px-0 !py-2 !placeholder-zinc-700 !transition-colors !rounded-none !shadow-none',
+                  label: '!font-mono !text-emerald-500/70 !text-[10px] !uppercase !tracking-[0.2em] !mb-0 !flex !items-center !gap-2 before:content-[\'>\'] before:text-emerald-500/70',
+                  anchor: '!text-zinc-500 hover:!text-emerald-400 !font-mono !text-[10px] !uppercase !tracking-widest !transition-colors',
+                  message: '!text-rose-400 !font-mono !text-xs !mt-2'
                 }
               }} 
               providers={[]} 
