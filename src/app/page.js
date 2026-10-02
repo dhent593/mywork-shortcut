@@ -6,7 +6,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared'
 
 function LoginView() {
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-mono relative overflow-hidden opacity-0 animate-fade-in">
+    <div className="min-h-screen bg-zinc-950 flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8 font-mono relative overflow-hidden opacity-0 animate-fade-in">
       {/* Background hacker effects */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.07),transparent_70%)]"></div>
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(16,185,129,0.03)_1px,transparent_1px)] bg-[length:100%_4px] opacity-40"></div>
